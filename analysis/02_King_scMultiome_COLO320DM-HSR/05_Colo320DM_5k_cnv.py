@@ -8,7 +8,7 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # This is the directory where those files are downloaded to
-data_dir = '/Users/xwyan/Dropbox/LAB/ChangLab/Projects/Data/20221106_scMultiome_ColoDM-ColoHSR/COLO320DM_5k/03_analysis/'
+data_dir = '/Users/xwyan/Dropbox/LAB/ChangLab/Projects/Data/20221106_analysis_scMultiome_ColoDM-ColoHSR/COLO320DM_5k/03_analysis/'
 output_dir = data_dir
 os.chdir(data_dir)
 
@@ -35,7 +35,7 @@ rna.obs['log2FC'] = [data_log2FC[data_log2FC['cell'] == rna.obs.index[x]]['X1276
 rna.obs['phase_num'] = [cellcycle_to_int[i] for i in rna.obs['phase'].tolist()]
 print(rna)
 
-sc.pl.umap(rna, color="leiden", legend_loc="on data", save='_%s_rna_leiden.pdf' % prefix)
+"""sc.pl.umap(rna, color="leiden", legend_loc="on data", save='_%s_rna_leiden.pdf' % prefix)
 sc.pl.umap(rna, color="phase", legend_loc="on data", save='_%s_rna_phase.pdf' % prefix)
 sc.pl.umap(rna, color="S_score", legend_loc="on data", save='_%s_rna_S_score.pdf' % prefix)
 sc.pl.umap(rna, color="G2M_score", legend_loc="on data", save='_%s_rna_G2M_score.pdf' % prefix)
@@ -43,28 +43,28 @@ sc.pl.umap(rna, color="log2FC", legend_loc="on data", save='_%s_rna_window1e6_sl
 sc.pl.umap(rna, color="counts", legend_loc="on data", vmin=10, vmax=500, save='_%s_rna_window1e6_sliding2e5_chr8_X127600001_counts.pdf' % prefix)
 sc.pl.umap(rna, color="MKI67", legend_loc="on data", save='_%s_rna_MKI67.pdf' % prefix)
 sc.pl.umap(rna, color="POLR3D", legend_loc="on data", save='_%s_rna_POLR3D.pdf' % prefix)
-sc.pl.umap(rna, color="BRD4", legend_loc="on data", save='_%s_rna_BRD4.pdf' % prefix)
+sc.pl.umap(rna, color="BRD4", legend_loc="on data", save='_%s_rna_BRD4.pdf' % prefix)"""
 
 mu.pp.filter_obs(rna, "leiden", lambda x: x.isin(["2", "4", "5"]))
 sorted = '245'
 rna = rna[~(rna.obs.leiden.isin(["4"]) & (rna.obs.phase.isin(['G2M'])))].copy()
 mu.pp.filter_obs(rna, "log2FC", lambda x: x > 1)
-sc.pl.umap(rna, color="leiden", legend_loc="on data", save='_%s_rna_sorted_%s_leiden.pdf' % (prefix, sorted))
+"""sc.pl.umap(rna, color="leiden", legend_loc="on data", save='_%s_rna_sorted_%s_leiden.pdf' % (prefix, sorted))
 sc.pl.umap(rna, color="phase", legend_loc="on data", save='_%s_rna_sorted_%s_phase.pdf' % (prefix, sorted))
 sc.pl.umap(rna, color="S_score", legend_loc="on data", save='_%s_rna_sorted_%s_S_score.pdf' % (prefix, sorted))
 sc.pl.umap(rna, color="G2M_score", legend_loc="on data", save='_%s_rna_sorted_%s_G2M_score.pdf' % (prefix, sorted))
 sc.pl.umap(rna, color="log2FC", legend_loc="on data", save='_%s_rna_sorted_%s_window1e6_sliding2e5_chr8_X127600001_log2FC.pdf' % (prefix, sorted))
-sc.pl.umap(rna, color="counts", legend_loc="on data", vmin=10, vmax=500, save='_%s_rna_sorted_%s_window1e6_sliding2e5_chr8_X127600001_counts.pdf' % (prefix, sorted))
+sc.pl.umap(rna, color="counts", legend_loc="on data", vmin=10, vmax=500, save='_%s_rna_sorted_%s_window1e6_sliding2e5_chr8_X127600001_counts.pdf' % (prefix, sorted))"""
 
-plt.scatter(rna.obs['G2M_score'].tolist(), rna.obs['counts'].tolist(), c=rna.obs['phase_num'], alpha=0.5, s=3)
-plt.ylim([0, 800])
+plt.scatter(rna.obs['G2M_score'].tolist(), rna.obs['log2FC'].tolist(), c=rna.obs['phase_num'], alpha=0.5, s=3)
+plt.ylim([0, 5.5])
 plt.xlabel('G2M_score')
 plt.ylabel('counts')
-plt.savefig('%sfigures/%s_rna_sorted_%s_G2M_score_vs_window1e6_sliding2e5_chr8_X127600001_counts.pdf' % (output_dir, prefix, sorted))
+plt.savefig('%sfigures/%s_rna_sorted_%s_G2M_score_vs_window1e6_sliding2e5_chr8_X127600001_log2FC.pdf' % (output_dir, prefix, sorted))
 plt.close()
 
-sns.boxplot(data=rna.obs, y='counts', x='phase_num', showfliers=False)
-plt.savefig('%sfigures/%s_rna_sorted_%s_window1e6_sliding2e5_chr8_X127600001_counts_by_phase.pdf' % (output_dir, prefix, sorted))
+sns.boxplot(data=rna.obs, y='log2FC', x='phase_num', showfliers=False)
+plt.savefig('%sfigures/%s_rna_sorted_%s_window1e6_sliding2e5_chr8_X127600001_log2FC_by_phase.pdf' % (output_dir, prefix, sorted))
 
 print("DONE!")
 

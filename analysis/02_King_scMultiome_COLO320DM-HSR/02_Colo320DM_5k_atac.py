@@ -10,7 +10,7 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # This is the directory where those files are downloaded to
-data_dir = '/Users/xwyan/Dropbox/LAB/ChangLab/Projects/Data/20221106_scMultiome_ColoDM-ColoHSR/COLO320DM_5k/03_analysis/'
+data_dir = '/Users/xwyan/Dropbox/LAB/ChangLab/Projects/Data/20221106_analysis_scMultiome_ColoDM-ColoHSR/COLO320DM_5k/03_analysis/'
 output_dir = data_dir
 os.chdir(data_dir)
 
@@ -22,6 +22,7 @@ print(mdata)
 
 # #### ATAC
 atac = mdata.mod['atac']
+atac.save("%s%s_atac.h5" % (output_dir, prefix))
 
 # ### PREPROCESSING
 # ## QC

@@ -7,9 +7,9 @@ import muon as mu
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-data_dir = '/Users/xwyan/Dropbox/LAB/ChangLab/Projects/Data/20221106_scMultiome_ColoDM-ColoHSR/COLO320DM_5k/' \
-           '02_cell_ranger_output_full/COLO320DM_5k_rep1_hg38/'
-output_dir = '/Users/xwyan/Dropbox/LAB/ChangLab/Projects/Data/20221106_scMultiome_ColoDM-ColoHSR/COLO320DM_5k/03_analysis/'
+data_dir = '/Users/xwyan/Dropbox/LAB/ChangLab/Projects/Data/20221106_analysis_scMultiome_ColoDM-ColoHSR/COLO320DM_5k/' \
+           '02_cellranger_output_King/COLO320DM_5k_rep1_hg38/'
+output_dir = '/Users/xwyan/Dropbox/LAB/ChangLab/Projects/Data/20221106_analysis_scMultiome_ColoDM-ColoHSR/COLO320DM_5k/03_analysis/'
 rep = 'rep1'
 prefix = 'COLO320DM_5K_%s' % rep
 
