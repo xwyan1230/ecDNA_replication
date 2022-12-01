@@ -58,6 +58,8 @@ def minuslogp_calculation(df1, df2):
 df_cc = pd.DataFrame()
 df_cc['gene'] = df_rna.columns
 print("calculating pct...")
+df_cc['all'] = df_rna.mean(0).tolist()
+df_cc['all_pct'] = count_pct_non_zero(df_rna)
 df_cc['C2'] = df_rna[df_rna.index.isin(C2)].mean(0).tolist()
 df_cc['C2_pct'] = count_pct_non_zero(df_rna[df_rna.index.isin(C2)])
 df_cc['C1'] = df_rna[df_rna.index.isin(C1)].mean(0).tolist()
