@@ -76,7 +76,7 @@ for item in temp:
 # you can count number of genes associated with a certain go term by
 # GO_items.count('GO:0001525')
 
-df = pd.read_csv('%s%s_average-expression_enrich_in_C2_log2FC_low.txt' % (data_dir, prefix), na_values=['.'], sep='\t')
+df = pd.read_csv('%s%s_normalized_average_expression_enrich_in_C2_log2FC_low_all.txt' % (data_dir, prefix), na_values=['.'], sep='\t')
 genelist_ori = df['gene'][:50]
 
 # gene_remove = ['PVT1', 'PCAT1', 'LRATD2', 'MYC', 'CASC8', 'PRNCR1', 'AC084116.2']
@@ -108,5 +108,5 @@ def go_it(test_genes):
 
 
 df_go = go_it(genelist)
-df_go.to_csv('%s%s_go_enrich_in_C2_log2FC_low_top50.txt' % (output_dir, prefix), index=False, sep='\t')
+df_go.to_csv('%s%s_go_enrich_in_C2_log2FC_low_local_low_top50.txt' % (output_dir, prefix), index=False, sep='\t')
 

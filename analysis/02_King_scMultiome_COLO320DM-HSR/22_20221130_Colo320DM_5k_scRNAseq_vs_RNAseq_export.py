@@ -11,7 +11,7 @@ rep = 'rep1'
 prefix = 'COLO320DM_5K_%s' % rep
 
 RNAseq = pd.read_csv('%sCOLO320DM_RNAseq_Rep1_FPKMandTPM.txt' % data_dir, na_values=['.'], sep='\t')
-scRNAseq = pd.read_csv('%s%s_average-expression.txt' % (data_dir, prefix), na_values=['.'], sep='\t')
+scRNAseq = pd.read_csv('%s%s_normalized_average_expression.txt' % (data_dir, prefix), na_values=['.'], sep='\t')
 
 print(len(RNAseq))
 print(len(scRNAseq))

@@ -6,46 +6,41 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # This is the directory where those files are downloaded to
-data_dir = '/Users/xwyan/Dropbox/LAB/ChangLab/Projects/Data/20221106_analysis_scMultiome_ColoDM-ColoHSR/COLO320DM_5k/03_analysis/'
+data_dir = '/Users/xwyan/Dropbox/LAB/ChangLab/Projects/Data/20221106_analysis_scMultiome_ColoDM-ColoHSR/COLO320HSR_5k/03_analysis/'
 output_dir = data_dir
 os.chdir(data_dir)
 
 rep = 'rep1'
-prefix = 'COLO320DM_5K_%s' % rep
+prefix = 'COLO320HSR_5K_%s' % rep
 
 df = pd.read_csv('%s%s_normalized_average_expression.txt' % (data_dir, prefix), na_values=['.'], sep='\t')
 print(len(df))
 
-# finding genes specifically high in C2
-print(len(df))
+df['high/low'] = df['C1_MYC_high']/(df['C1_MYC_high']+df['C1_MYC_low'])
+df['gamma_high/low'] = np.abs(df['high/low']-0.5)*df['p_C1_high/low']
 
-df['C2/C1+C2'] = df['C2']/(df['C1']+df['C2'])
-df['gamma_C2/C1'] = np.abs(df['C2/C1+C2']-0.5)*df['p_C2/C1']
+df_Highenrich = df[df['high/low'] > 0.5].sort_values(by=['gamma_high/low'], ascending=False)
+print(len(df_Highenrich))
+df_Highenrich.to_csv('%s%s_normalized_average_expression_enrich_in_C1_MYC_high_all.txt' % (output_dir, prefix), index=False, sep='\t')
+df_Lowenrich = df[df['high/low'] < 0.5].sort_values(by=['gamma_high/low'], ascending=False)
+print(len(df_Lowenrich))
+df_Lowenrich.to_csv('%s%s_normalized_average_expression_enrich_in_C1_MYC_low_all.txt' % (output_dir, prefix), index=False, sep='\t')
 
-df_C2enrich = df[df['C2/C1+C2'] > 0.5].sort_values(by=['gamma_C2/C1'], ascending=False)
-print(len(df_C2enrich))
-df_C2enrich.to_csv('%s%s_normalized_average_expression_enrich_in_C2.txt' % (output_dir, prefix), index=False, sep='\t')
-df_C1enrich = df[df['C2/C1+C2'] < 0.5].sort_values(by=['gamma_C2/C1'], ascending=False)
-print(len(df_C1enrich))
-df_C1enrich.to_csv('%s%s_normalized_average_expression_enrich_in_C1.txt' % (output_dir, prefix), index=False, sep='\t')
-
-# ishit = np.abs(df['C2/C1+C2']-0.5)*df['p_C2/C1'] >= 10
-# print(len(df[ishit]))
-df_sub = df[df['p_C2/C1'] > -np.log(0.05)].copy()
+df_sub = df[df['p_C1_high/low'] > -np.log(0.05)].copy()
 
 # 2d volcano plot
 fig, ax = plt.subplots()
-plt.scatter(df_sub['C2/C1+C2'], df_sub['p_C2/C1'], c='black', s=5, alpha=0.5)
+plt.scatter(df_sub['high/low'], df_sub['p_C1_high/low'], c='black', s=5, alpha=0.5)
 # plt.scatter(df[ishit]['C2/C1+C2'], df[ishit]['p_C2/C1'], s=5, c='r')
 # plt.plot(np.linspace(0, 1, 1000), np.abs(10 / np.linspace(-0.5, 0.5, 1000)), 'k--', lw=.5)
 # for i in range(len(df_high)):
 #      ax.annotate(df_high['gene'].tolist()[i], (df_high['S/G1'].tolist()[i], df_high['G2M/G1'].tolist()[i]))
 # plt.axvline(x=cutoff, linestyle='--', c='r')
 # plt.axhline(y=cutoff, linestyle='--', c='r')
-plt.ylim([0, 700])
-plt.xlabel('C2/C1+C2')
+# plt.ylim([0, 700])
+plt.xlabel('MYC_high/low')
 plt.ylabel('-log(p)')
-plt.savefig('%sfigures/%s_expression-level_C2-vs-C1.pdf' % (output_dir, prefix))
+plt.savefig('%sfigures/%s_expression-level_C1_MYC_high_vs_low_all.pdf' % (output_dir, prefix))
 plt.close()
 
 

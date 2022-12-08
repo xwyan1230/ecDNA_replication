@@ -8,12 +8,12 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # This is the directory where those files are downloaded to
-data_dir = '/Users/xwyan/Dropbox/LAB/ChangLab/Projects/Data/20221106_analysis_scMultiome_ColoDM-ColoHSR/COLO320DM_5k/03_analysis/'
+data_dir = '/Users/xwyan/Dropbox/LAB/ChangLab/Projects/Data/20221106_analysis_scMultiome_ColoDM-ColoHSR/COLO320HSR_5k/03_analysis/'
 output_dir = data_dir
 os.chdir(data_dir)
 
 rep = 'rep1'
-prefix = 'COLO320DM_5K_%s' % rep
+prefix = 'COLO320HSR_5K_%s' % rep
 
 mdata = mu.read("%s.h5mu" % prefix)
 rna = mdata.mod['rna']
@@ -31,21 +31,18 @@ rna.obs['log2FC'] = [data_log2FC[data_log2FC['cell'] == rna.obs.index[x]]['X1276
 mu.pp.filter_obs(rna, 'log2FC', lambda x: x > 0)
 print(rna)
 
-mu.pp.filter_obs(rna, "leiden", lambda x: x.isin(["2", "4", "5"]))
-rna = rna[~(rna.obs.leiden.isin(["4"]) & (rna.obs.phase.isin(['G2M'])))].copy()
-# print(rna.var[rna.var.index == 'BX284613.2']['gene_ids'])
+C1 = pd.read_csv('%s%s_sorted_01267.txt' % (data_dir, prefix), header=None, na_values=['.'], sep='\t')[0].tolist()
+C1_high = pd.read_csv('%s%s_sorted_01267_MYC_high.txt' % (data_dir, prefix), header=None, na_values=['.'], sep='\t')[0].tolist()
+C1_low = pd.read_csv('%s%s_sorted_01267_MYC_low.txt' % (data_dir, prefix), header=None, na_values=['.'], sep='\t')[0].tolist()
 
-data = pd.read_csv('%s_normalized_average_expression_enrich_in_C2_log2FC_high_all.txt' % prefix, na_values=['.'], sep='\t')
+rna = rna[rna.obs.index.isin(C1)]
+celllist = [C1_high, C1_low]
+cellname = ['C1_MYC_high', 'C1_MYC_low']
 
-# i = 'MYC'
-# sc.pl.umap(rna, color=i, legend_loc="on data")
+# sc.pl.umap(rna, color='log2FC', legend_loc="on data", save='_%s_C2_log2FC' % prefix)
 
-genelist = ['GLI3', 'PTCH1', 'CAMK2D', 'SMAD3', 'SMAD4', 'YAP1']
-for i in genelist:
-       sc.pl.umap(rna, color=i, legend_loc="on data", save='_%s_C2_%s' % (prefix, i))
-
-# for i in data['gene'].tolist()[:50]:
-#       sc.pl.umap(rna, color=i, legend_loc="on data", save='_%s_rna_%s' % (prefix, i))
-     # sc.pl.umap(rna, color=i, legend_loc="on data")
+for i in range(len(celllist)):
+    rna.obs['cell'] = [1 if rna.obs.index[x] in celllist[i] else 0 for x in range(len(rna.obs.index))]
+    sc.pl.umap(rna, color='cell', legend_loc="on data", save='_%s_cell_%s' % (prefix, cellname[i]))
 
 print("DONE!")

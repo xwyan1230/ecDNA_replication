@@ -60,9 +60,27 @@ df.to_csv('%s%s_sorted_245_log2FC_high.txt' % (output_dir, prefix), index=False,
 
 df = pd.DataFrame()
 rna = rna_245.copy()
-mu.pp.filter_obs(rna, "log2FC", lambda x: (x <= 4.5) & (x>0))
+mu.pp.filter_obs(rna, "log2FC", lambda x: (x <= 4.5) & (x > 0))
 df['log2FC_low'] = rna.obs.index.tolist()
 df.to_csv('%s%s_sorted_245_log2FC_low.txt' % (output_dir, prefix), index=False, header=False, sep='\t')
+
+df = pd.DataFrame()
+rna = rna_245.copy()
+mu.pp.filter_obs(rna, "log2FC", lambda x: x > 4.8)
+df['log2FC_high'] = rna.obs.index.tolist()
+df.to_csv('%s%s_sorted_245_log2FC_3group1_high.txt' % (output_dir, prefix), index=False, header=False, sep='\t')
+
+df = pd.DataFrame()
+rna = rna_245.copy()
+mu.pp.filter_obs(rna, "log2FC", lambda x: (x < 4) & (x > 0))
+df['log2FC_low'] = rna.obs.index.tolist()
+df.to_csv('%s%s_sorted_245_log2FC_3group1_low.txt' % (output_dir, prefix), index=False, header=False, sep='\t')
+
+df = pd.DataFrame()
+rna = rna_245.copy()
+mu.pp.filter_obs(rna, "log2FC", lambda x: (x >= 4) & (x <= 4.8))
+df['log2FC_mid'] = rna.obs.index.tolist()
+df.to_csv('%s%s_sorted_245_log2FC_3group1_mid.txt' % (output_dir, prefix), index=False, header=False, sep='\t')
 
 print("DONE!")
 

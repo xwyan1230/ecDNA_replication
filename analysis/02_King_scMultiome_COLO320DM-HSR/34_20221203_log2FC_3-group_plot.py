@@ -31,21 +31,22 @@ rna.obs['log2FC'] = [data_log2FC[data_log2FC['cell'] == rna.obs.index[x]]['X1276
 mu.pp.filter_obs(rna, 'log2FC', lambda x: x > 0)
 print(rna)
 
-mu.pp.filter_obs(rna, "leiden", lambda x: x.isin(["2", "4", "5"]))
-rna = rna[~(rna.obs.leiden.isin(["4"]) & (rna.obs.phase.isin(['G2M'])))].copy()
-# print(rna.var[rna.var.index == 'BX284613.2']['gene_ids'])
+C2 = pd.read_csv('%s%s_sorted_245.txt' % (data_dir, prefix), header=None, na_values=['.'], sep='\t')[0].tolist()
+# C2_log2FC_high = pd.read_csv('%s%s_sorted_245_log2FC_high.txt' % (data_dir, prefix), header=None, na_values=['.'], sep='\t')[0].tolist()
+# C2_log2FC_low = pd.read_csv('%s%s_sorted_245_log2FC_low.txt' % (data_dir, prefix), header=None, na_values=['.'], sep='\t')[0].tolist()
+C2_log2FC_3group1_high = pd.read_csv('%s%s_sorted_245_log2FC_3group1_high.txt' % (data_dir, prefix), header=None, na_values=['.'], sep='\t')[0].tolist()
+C2_log2FC_3group1_low = pd.read_csv('%s%s_sorted_245_log2FC_3group1_low.txt' % (data_dir, prefix), header=None, na_values=['.'], sep='\t')[0].tolist()
+C2_log2FC_3group1_mid = pd.read_csv('%s%s_sorted_245_log2FC_3group1_mid.txt' % (data_dir, prefix), header=None, na_values=['.'], sep='\t')[0].tolist()
 
-data = pd.read_csv('%s_normalized_average_expression_enrich_in_C2_log2FC_high_all.txt' % prefix, na_values=['.'], sep='\t')
+rna = rna[rna.obs.index.isin(C2)]
+celllist = [C2_log2FC_3group1_low, C2_log2FC_3group1_high, C2_log2FC_3group1_mid]
+cellname = ['C2_log2FC_3group1_low', 'C2_log2FC_3group1_high', 'C2_log2FC_3group1_mid']
 
-# i = 'MYC'
-# sc.pl.umap(rna, color=i, legend_loc="on data")
+i = 'MYC'
+sc.pl.umap(rna, color=i, legend_loc="on data", save='_%s_C2_%s' % (prefix, i))
 
-genelist = ['GLI3', 'PTCH1', 'CAMK2D', 'SMAD3', 'SMAD4', 'YAP1']
-for i in genelist:
-       sc.pl.umap(rna, color=i, legend_loc="on data", save='_%s_C2_%s' % (prefix, i))
-
-# for i in data['gene'].tolist()[:50]:
-#       sc.pl.umap(rna, color=i, legend_loc="on data", save='_%s_rna_%s' % (prefix, i))
-     # sc.pl.umap(rna, color=i, legend_loc="on data")
+"""for i in range(len(celllist)):
+    rna.obs['cell'] = [1 if rna.obs.index[x] in celllist[i] else 0 for x in range(len(rna.obs.index))]
+    sc.pl.umap(rna, color='cell', legend_loc="on data", save='_%s_cell_%s' % (prefix, cellname[i]))"""
 
 print("DONE!")

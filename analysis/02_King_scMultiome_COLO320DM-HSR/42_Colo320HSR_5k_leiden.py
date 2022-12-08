@@ -8,12 +8,12 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # This is the directory where those files are downloaded to
-data_dir = '/Users/xwyan/Dropbox/LAB/ChangLab/Projects/Data/20221106_analysis_scMultiome_ColoDM-ColoHSR/COLO320DM_5k/03_analysis/'
+data_dir = '/Users/xwyan/Dropbox/LAB/ChangLab/Projects/Data/20221106_analysis_scMultiome_ColoDM-ColoHSR/COLO320HSR_5k/03_analysis/'
 output_dir = data_dir
 os.chdir(data_dir)
 
 rep = 'rep1'
-prefix = 'COLO320DM_5K_%s' % rep
+prefix = 'COLO320HSR_5K_%s' % rep
 
 mdata = mu.read("%s.h5mu" % prefix)
 rna = mdata.mod['rna']
@@ -31,21 +31,14 @@ rna.obs['log2FC'] = [data_log2FC[data_log2FC['cell'] == rna.obs.index[x]]['X1276
 mu.pp.filter_obs(rna, 'log2FC', lambda x: x > 0)
 print(rna)
 
-mu.pp.filter_obs(rna, "leiden", lambda x: x.isin(["2", "4", "5"]))
-rna = rna[~(rna.obs.leiden.isin(["4"]) & (rna.obs.phase.isin(['G2M'])))].copy()
-# print(rna.var[rna.var.index == 'BX284613.2']['gene_ids'])
+# data = pd.read_csv('COLO320DM_5K_rep1_normalized_average_expression_enrich_in_C2_log2FC_high_all.txt', na_values=['.'], sep='\t')
+data = pd.read_csv('expression_level_Wnt_full.txt', na_values=['.'], sep='\t')
+data = data[data['HSR_all'] > 0.5].copy().reset_index()
 
-data = pd.read_csv('%s_normalized_average_expression_enrich_in_C2_log2FC_high_all.txt' % prefix, na_values=['.'], sep='\t')
-
-# i = 'MYC'
-# sc.pl.umap(rna, color=i, legend_loc="on data")
-
-genelist = ['GLI3', 'PTCH1', 'CAMK2D', 'SMAD3', 'SMAD4', 'YAP1']
-for i in genelist:
-       sc.pl.umap(rna, color=i, legend_loc="on data", save='_%s_C2_%s' % (prefix, i))
-
-# for i in data['gene'].tolist()[:50]:
-#       sc.pl.umap(rna, color=i, legend_loc="on data", save='_%s_rna_%s' % (prefix, i))
+# i = 'KLK6'
+sc.pl.umap(rna, color='phase', legend_loc="on data", save='_phase')
+#for i in data['gene'].tolist():
+#    sc.pl.umap(rna, color=i, legend_loc="on data", save='_%s_rna_%s' % (prefix, i))
      # sc.pl.umap(rna, color=i, legend_loc="on data")
 
 print("DONE!")

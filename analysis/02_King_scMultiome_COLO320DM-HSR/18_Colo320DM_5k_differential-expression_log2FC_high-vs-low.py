@@ -13,25 +13,26 @@ os.chdir(data_dir)
 rep = 'rep1'
 prefix = 'COLO320DM_5K_%s' % rep
 
-df = pd.read_csv('%s%s_average-expression_enrich_in_C2.txt' % (data_dir, prefix), na_values=['.'], sep='\t')
+df = pd.read_csv('%s%s_normalized_average_expression.txt' % (data_dir, prefix), na_values=['.'], sep='\t')
 print(len(df))
 
 df['high/low'] = df['C2_log2FC_high']/(df['C2_log2FC_high']+df['C2_log2FC_low'])
 df['gamma_high/low'] = np.abs(df['high/low']-0.5)*df['p_log2FC_high/low']
 
-df_Highenrich = df[df['high/low'] > 0.5].sort_values(by=['gamma_high/low'], ascending=False)
+df_Highenrich = df[df['high/low'] > 0.5].sort_values(by=['high/low'], ascending=False)
 print(len(df_Highenrich))
-df_Highenrich.to_csv('%s%s_average-expression_enrich_in_C2_log2FC_high.txt' % (output_dir, prefix), index=False, sep='\t')
-df_Lowenrich = df[df['high/low'] < 0.5].sort_values(by=['gamma_high/low'], ascending=False)
+df_Highenrich.to_csv('%s%s_normalized_average_expression_enrich_in_C2_log2FC_high_all_by_value.txt' % (output_dir, prefix), index=False, sep='\t')
+df_Lowenrich = df[df['high/low'] < 0.5].sort_values(by=['high/low'], ascending=False)
 print(len(df_Lowenrich))
-df_Lowenrich.to_csv('%s%s_average-expression_enrich_in_C2_log2FC_low.txt' % (output_dir, prefix), index=False, sep='\t')
+df_Lowenrich.to_csv('%s%s_normalized_average_expression_enrich_in_C2_log2FC_low_all_by_value.txt' % (output_dir, prefix), index=False, sep='\t')
 
 # ishit = np.abs(df['C2/C1+C2']-0.5)*df['p_C2/C1'] >= 10
 # print(len(df[ishit]))
+df_sub = df[df['p_log2FC_high/low'] > -np.log(0.05)].copy()
 
 # 2d volcano plot
 fig, ax = plt.subplots()
-plt.scatter(df['high/low'], df['p_log2FC_high/low'], c='black', s=5, alpha=0.5)
+plt.scatter(df_sub['high/low'], df_sub['p_log2FC_high/low'], c='black', s=5, alpha=0.5)
 # plt.scatter(df[ishit]['C2/C1+C2'], df[ishit]['p_C2/C1'], s=5, c='r')
 # plt.plot(np.linspace(0, 1, 1000), np.abs(10 / np.linspace(-0.5, 0.5, 1000)), 'k--', lw=.5)
 # for i in range(len(df_high)):
@@ -41,7 +42,7 @@ plt.scatter(df['high/low'], df['p_log2FC_high/low'], c='black', s=5, alpha=0.5)
 # plt.ylim([0, 700])
 plt.xlabel('log2FC_high/low')
 plt.ylabel('-log(p)')
-plt.savefig('%sfigures/%s_expression-level_C2_log2FC_high_vs_low.pdf' % (output_dir, prefix))
+plt.savefig('%sfigures/%s_expression-level_C2_log2FC_high_vs_low_all.pdf' % (output_dir, prefix))
 plt.close()
 
 
